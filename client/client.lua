@@ -996,15 +996,11 @@ lib.onCache('vehicle', function(vehicle)
 end)
 
 if HUD_SETTINGS_ENABLED then
-    lib.addKeybind({
-        name = 'settings',
-        description = 'Open HUD Settings',
-        defaultMapper = 'keyboard',
-        default = HUD_SETTINGS_CONFIG.keybind or 'I',
-        onPressed = function()
-            toggleSettings(true)
-        end
-    })
+    local commandName = HUD_SETTINGS_CONFIG.command or 'hudsettings'
+    RegisterCommand(commandName, function()
+        toggleSettings(true)
+    end, false)
+    TriggerEvent('chat:addSuggestion', '/' .. commandName, 'Open HUD Settings')
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', initializeHud)

@@ -28,13 +28,13 @@ return {
     },
 
     hudSettings = {
-        -- When false, the in-game settings menu and keybind are disabled.
+        -- When false, the in-game settings menu and command are disabled.
         -- The defaults below are then forced for every player and saved player
         -- preferences are ignored.
         enabled = true,
 
         -- Only used when hudSettings.enabled is true.
-        keybind = 'I',
+        command = 'hudsettings',
 
         -- These values are used as the initial player settings. They are also
         -- the forced settings when hudSettings.enabled is false.
