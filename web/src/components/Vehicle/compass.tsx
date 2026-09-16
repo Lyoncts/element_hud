@@ -68,7 +68,7 @@ export const Compass = () => {
         <Box
           style={{
             position: "fixed",
-            left: "1.0vw",
+            left: "0.9vw",
             bottom: "6.05vh",
             zIndex: 999,
             pointerEvents: "none",
@@ -79,7 +79,7 @@ export const Compass = () => {
           <Flex
             direction="column"
             style={{
-              width: "24.5vh",
+              width: "26.2vh",
               backgroundColor: "transparent",
             }}
           >
@@ -166,46 +166,94 @@ export const Compass = () => {
               <Flex
                 align="center"
                 justify="space-between"
-                gap="0.3vh"
-                px="0.6vh"
-                py="0.45vh"
+                px="0.5vh"
+                py="0.55vh"
                 style={{
                   backgroundColor: "rgba(11, 18, 30, 0.96)",
                   border: "0.22vh solid #1e293b",
                   borderBottom: "0.18vh solid #1e293b",
                   borderRadius: "0.45vh 0.45vh 0 0",
                   whiteSpace: "nowrap",
-                  overflow: "hidden",
                 }}
               >
-                {/* Time */}
-                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
-                  <FaClock size="1.0vh" color="#38bdf8" />
-                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
+                {/* 1. Time */}
+                <Flex
+                  align="center"
+                  justify="center"
+                  gap="0.35vh"
+                  style={{ flex: 1, minWidth: 0, padding: "0 0.3vh" }}
+                >
+                  <FaClock size="1.05vh" color="#38bdf8" style={{ flexShrink: 0 }} />
+                  <Text fz="0.95vh" fw={700} c="#f8fafc" lh={1} style={{ letterSpacing: "0.02em" }}>
                     {time || "21:59"}
                   </Text>
                 </Flex>
 
-                {/* Weather */}
-                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0, minWidth: 0 }}>
-                  <WeatherIconComponent size="1.05vh" color="#38bdf8" />
-                  <Text fz="0.95vh" fw={800} c="white" lh={1} truncate style={{ whiteSpace: "nowrap" }}>
+                {/* Divider */}
+                <Box
+                  style={{
+                    width: "1px",
+                    height: "1.4vh",
+                    backgroundColor: "rgba(148, 163, 184, 0.25)",
+                    flexShrink: 0,
+                  }}
+                />
+
+                {/* 2. Weather */}
+                <Flex
+                  align="center"
+                  justify="center"
+                  gap="0.35vh"
+                  style={{ flex: 1.35, minWidth: 0, padding: "0 0.3vh" }}
+                >
+                  <WeatherIconComponent size="1.1vh" color="#38bdf8" style={{ flexShrink: 0 }} />
+                  <Text fz="0.95vh" fw={700} c="#f8fafc" lh={1} truncate style={{ letterSpacing: "0.02em" }}>
                     {weather || "Rain"}
                   </Text>
                 </Flex>
 
-                {/* Temperature */}
-                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
-                  <FaTemperatureHalf size="1.0vh" color="#38bdf8" />
-                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
+                {/* Divider */}
+                <Box
+                  style={{
+                    width: "1px",
+                    height: "1.4vh",
+                    backgroundColor: "rgba(148, 163, 184, 0.25)",
+                    flexShrink: 0,
+                  }}
+                />
+
+                {/* 3. Temperature */}
+                <Flex
+                  align="center"
+                  justify="center"
+                  gap="0.35vh"
+                  style={{ flex: 1, minWidth: 0, padding: "0 0.3vh" }}
+                >
+                  <FaTemperatureHalf size="1.05vh" color="#38bdf8" style={{ flexShrink: 0 }} />
+                  <Text fz="0.95vh" fw={700} c="#f8fafc" lh={1} style={{ letterSpacing: "0.02em" }}>
                     {temp || "72°F"}
                   </Text>
                 </Flex>
 
-                {/* Wind / Speed */}
-                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
-                  <FaWind size="1.0vh" color="#38bdf8" />
-                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
+                {/* Divider */}
+                <Box
+                  style={{
+                    width: "1px",
+                    height: "1.4vh",
+                    backgroundColor: "rgba(148, 163, 184, 0.25)",
+                    flexShrink: 0,
+                  }}
+                />
+
+                {/* 4. Wind / Speed */}
+                <Flex
+                  align="center"
+                  justify="center"
+                  gap="0.35vh"
+                  style={{ flex: 1.25, minWidth: 0, padding: "0 0.3vh" }}
+                >
+                  <FaWind size="1.05vh" color="#38bdf8" style={{ flexShrink: 0 }} />
+                  <Text fz="0.95vh" fw={700} c="#f8fafc" lh={1} style={{ letterSpacing: "0.02em" }}>
                     {wind || "N 0 MPH"}
                   </Text>
                 </Flex>
