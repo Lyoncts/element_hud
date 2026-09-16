@@ -69,7 +69,7 @@ export const Compass = () => {
           style={{
             position: "fixed",
             left: "1vw",
-            bottom: "4.8vh",
+            bottom: "5.6vh",
             zIndex: 999,
             pointerEvents: "none",
             backgroundColor: "transparent",
@@ -79,7 +79,7 @@ export const Compass = () => {
           <Flex
             direction="column"
             style={{
-              width: "16.4vw",
+              width: "30.4vh",
               backgroundColor: "transparent",
             }}
           >
@@ -162,13 +162,13 @@ export const Compass = () => {
                 boxShadow: "0 6px 18px rgba(0, 0, 0, 0.65)",
               }}
             >
-              {/* Info Bar Header (Solid dark slate) */}
+              {/* Info Bar Header */}
               <Flex
                 align="center"
                 justify="space-between"
-                gap="0.8vh"
-                px="0.9vh"
-                py="0.65vh"
+                gap="0.6vh"
+                px="0.8vh"
+                py="0.6vh"
                 style={{
                   backgroundColor: "rgba(11, 18, 30, 0.96)",
                   border: "0.22vh solid #1e293b",
@@ -177,43 +177,43 @@ export const Compass = () => {
                 }}
               >
                 {/* Time */}
-                <Flex align="center" gap="0.4vh">
-                  <FaClock size="1.15vh" color="#38bdf8" />
-                  <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.35vh">
+                  <FaClock size="1.1vh" color="#38bdf8" />
+                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
                     {time || "21:59"}
                   </Text>
                 </Flex>
 
                 {/* Weather */}
-                <Flex align="center" gap="0.4vh">
-                  <WeatherIconComponent size="1.2vh" color="#38bdf8" />
-                  <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.35vh">
+                  <WeatherIconComponent size="1.15vh" color="#38bdf8" />
+                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
                     {weather || "Rain"}
                   </Text>
                 </Flex>
 
                 {/* Temperature */}
-                <Flex align="center" gap="0.4vh">
-                  <FaTemperatureHalf size="1.15vh" color="#38bdf8" />
-                  <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.35vh">
+                  <FaTemperatureHalf size="1.1vh" color="#38bdf8" />
+                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
                     {temp || "72°F"}
                   </Text>
                 </Flex>
 
                 {/* Wind / Speed */}
-                <Flex align="center" gap="0.4vh">
-                  <FaWind size="1.15vh" color="#38bdf8" />
-                  <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.35vh">
+                  <FaWind size="1.1vh" color="#38bdf8" />
+                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
                     {wind || "N 0 MPH"}
                   </Text>
                 </Flex>
               </Flex>
 
-              {/* Minimap Frame (Completely Transparent Cutout for GTA Minimap) */}
+              {/* Minimap Frame (Transparent Cutout for GTA Minimap) */}
               <Box
                 style={{
                   width: "100%",
-                  height: "18.6vh",
+                  height: "21.4vh",
                   position: "relative",
                   backgroundColor: "transparent",
                   borderLeft: "0.22vh solid #1e293b",
