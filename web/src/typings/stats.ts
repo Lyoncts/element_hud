@@ -17,6 +17,10 @@ export type CompassStore = {
   direction: string;
   zone: string;
   heading: number;
+  time?: string;
+  weather?: string;
+  temp?: string;
+  wind?: string;
 };
 
 export type SpeedUnit = "KMT" | "MPH";

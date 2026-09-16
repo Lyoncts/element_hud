@@ -29,15 +29,20 @@ import {
 import { IoSettingsSharp } from "react-icons/io5";
 import {
   FaClapperboard,
+  FaClock,
+  FaCloudRain,
   FaFireFlameCurved,
   FaGamepad,
   FaGasPump,
+  FaLocationDot,
   FaLungs,
   FaMicrophone,
   FaMicrophoneSlash,
   FaOilCan,
+  FaTemperatureHalf,
   FaUser,
   FaWalkieTalkie,
+  FaWind,
   FaX,
 } from "react-icons/fa6";
 import {
@@ -972,27 +977,72 @@ const Settings = () => {
   };
 
   const PreviewCompassDefault = () => (
-    <Stack gap="0.35vh" align="center" w="100%">
-      <Text fz="0.8vh" fw={700} c="dimmed" tt="uppercase" lh={1}>
-        Rockford Hills
-      </Text>
-      <Text
-        fz="1.65vh"
-        fw={900}
-        c="blue.4"
-        tt="uppercase"
-        lh={1}
-        style={{ textShadow: `0 0 8px ${theme.colors.blue[6]}` }}
+    <Flex direction="column" w="100%" gap="0.45vh">
+      <Flex align="center" gap="0.55vh">
+        <Flex
+          align="center"
+          justify="center"
+          style={{
+            width: "2.5vh",
+            height: "2.5vh",
+            flexShrink: 0,
+            borderRadius: "0.3vh",
+            backgroundColor: "#0084ff",
+          }}
+        >
+          <Text fz="1.1vh" fw={900} c="white" lh={1}>
+            NW
+          </Text>
+        </Flex>
+        <Flex direction="column" gap="0.1vh" style={{ minWidth: 0, flex: 1 }}>
+          <Flex align="center" gap="0.3vh">
+            <FaLocationDot size="0.8vh" color="#38bdf8" />
+            <Text fz="0.95vh" fw={900} lh={1} tt="uppercase" truncate c="blue.4">
+              Elgin Ave
+            </Text>
+          </Flex>
+          <Text fz="0.75vh" fw={800} c="white" lh={1} tt="uppercase" truncate>
+            Pillbox Hill
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex
+        align="center"
+        justify="space-between"
+        px="0.55vh"
+        py="0.35vh"
+        style={{
+          borderRadius: "0.3vh",
+          backgroundColor: alpha(theme.colors.dark[8], 0.9),
+          border: `0.1vh solid ${alpha(theme.colors.dark[4], 0.3)}`,
+        }}
       >
-        N
-      </Text>
-      <Text fz="1.2vh" fw={900} c="gray.0" tt="uppercase" lh={1}>
-        Palomino Ave
-      </Text>
-      <Text fz="0.85vh" fw={800} c="dimmed" tt="uppercase" lh={1}>
-        Spanish Ave
-      </Text>
-    </Stack>
+        <Flex align="center" gap="0.25vh">
+          <FaClock size="0.75vh" color="#38bdf8" />
+          <Text fz="0.75vh" fw={800} c="white" lh={1}>
+            21:59
+          </Text>
+        </Flex>
+        <Flex align="center" gap="0.25vh">
+          <FaCloudRain size="0.75vh" color="#38bdf8" />
+          <Text fz="0.75vh" fw={800} c="white" lh={1}>
+            Rain
+          </Text>
+        </Flex>
+        <Flex align="center" gap="0.25vh">
+          <FaTemperatureHalf size="0.75vh" color="#38bdf8" />
+          <Text fz="0.75vh" fw={800} c="white" lh={1}>
+            72°F
+          </Text>
+        </Flex>
+        <Flex align="center" gap="0.25vh">
+          <FaWind size="0.75vh" color="#38bdf8" />
+          <Text fz="0.75vh" fw={800} c="white" lh={1}>
+            10 MPH
+          </Text>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 
   const PreviewCompassCompact = () => (
@@ -1676,8 +1726,10 @@ const Settings = () => {
             value && saveCompassPosition(value as CompassPosition)
           }
           data={[
+            { value: "bottom-left", label: "Bottom Left (Above Minimap)" },
             { value: "top-center", label: "Top Center" },
             { value: "bottom-center", label: "Bottom Center" },
+            { value: "top-left", label: "Top Left" },
           ]}
           w="13vw"
           allowDeselect={false}

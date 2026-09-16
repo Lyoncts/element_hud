@@ -55,19 +55,19 @@ function GetCamCardinalDirection()
     if heading < 22.5 or heading >= 337.5 then
         return 'N'
     elseif heading >= 22.5 and heading < 67.5 then
-        return 'NØ'
+        return 'NE'
     elseif heading >= 67.5 and heading < 112.5 then
-        return 'Ø'
+        return 'E'
     elseif heading >= 112.5 and heading < 157.5 then
-        return 'SØ'
+        return 'SE'
     elseif heading >= 157.5 and heading < 202.5 then
         return 'S'
     elseif heading >= 202.5 and heading < 247.5 then
-        return 'SV'
+        return 'SW'
     elseif heading >= 247.5 and heading < 292.5 then
-        return 'V'
+        return 'W'
     else -- heading >= 292.5 and heading < 337.5
-        return 'NV'
+        return 'NW'
     end
 end
 
@@ -173,9 +173,84 @@ local zoneNames = {
 }
 
 
+local WEATHER_NAMES = {
+    [`EXTRASUNNY`] = "Extra Sunny",
+    [`CLEAR`] = "Clear",
+    [`CLOUDS`] = "Clouds",
+    [`SMOG`] = "Smog",
+    [`FOGGY`] = "Foggy",
+    [`OVERCAST`] = "Overcast",
+    [`RAIN`] = "Rain",
+    [`THUNDER`] = "Thunder",
+    [`CLEARING`] = "Clearing",
+    [`NEUTRAL`] = "Neutral",
+    [`SNOW`] = "Snow",
+    [`BLIZZARD`] = "Blizzard",
+    [`SNOWLIGHT`] = "Light Snow",
+    [`XMAS`] = "Snow",
+    [`HALLOWEEN`] = "Foggy"
+}
+
+local WEATHER_BASE_TEMPS = {
+    [`EXTRASUNNY`] = 85,
+    [`CLEAR`] = 78,
+    [`CLOUDS`] = 72,
+    [`SMOG`] = 68,
+    [`FOGGY`] = 65,
+    [`OVERCAST`] = 66,
+    [`RAIN`] = 62,
+    [`THUNDER`] = 58,
+    [`CLEARING`] = 68,
+    [`NEUTRAL`] = 72,
+    [`SNOW`] = 30,
+    [`BLIZZARD`] = 18,
+    [`SNOWLIGHT`] = 28,
+    [`XMAS`] = 28,
+    [`HALLOWEEN`] = 62
+}
+
 local function GetZoneLabel(coords)
     local zoneCode = string.upper(GetNameOfZone(coords.x, coords.y, coords.z))
-    return zoneNames[zoneCode]
+    local label = GetLabelText(zoneCode)
+    if label and label ~= "NULL" and label ~= "" then
+        return string.upper(label)
+    end
+    return zoneNames[zoneCode] or zoneCode
+end
+
+function GetCurrentWeatherName()
+    local weatherHash = GetPrevWeatherTypeHashName()
+    return WEATHER_NAMES[weatherHash] or "Clear"
+end
+
+function GetCurrentTemperature(speedUnit)
+    local weatherHash = GetPrevWeatherTypeHashName()
+    local baseTemp = WEATHER_BASE_TEMPS[weatherHash] or 72
+    local hour = GetClockHours()
+    if hour < 6 or hour >= 21 then
+        baseTemp = baseTemp - 8
+    elseif hour >= 12 and hour <= 16 then
+        baseTemp = baseTemp + 4
+    end
+
+    if speedUnit == 'kph' then
+        local celsius = math.floor((baseTemp - 32) * 5 / 9)
+        return string.format("%d°C", celsius)
+    else
+        return string.format("%d°F", baseTemp)
+    end
+end
+
+function GetCurrentTimeString()
+    local hours = GetClockHours()
+    local minutes = GetClockMinutes()
+    return string.format("%02d:%02d", hours, minutes)
+end
+
+function GetCurrentWindString(speedMultiplier, speedUnit)
+    local windSpeed = GetWindSpeed()
+    local speed = math.floor(windSpeed * (speedMultiplier or 2.23694))
+    return string.format("%d %s", speed, speedUnit or "MPH")
 end
 
 function GetStreet()

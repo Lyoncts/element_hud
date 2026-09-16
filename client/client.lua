@@ -43,8 +43,10 @@ local VALID_COMPASS_LAYOUTS = {
 }
 
 local VALID_COMPASS_POSITIONS = {
+    ['bottom-left'] = true,
     ['top-center'] = true,
     ['bottom-center'] = true,
+    ['top-left'] = true,
 }
 
 local VALID_INDICATOR_VISIBILITY = {
@@ -341,7 +343,11 @@ function UpdateRoute()
         nextStreet = route.nextNearestStreet,
         direction = route.heading,
         zone = route.zone,
-        heading = route.heading
+        heading = route.heading,
+        time = GetCurrentTimeString(),
+        weather = GetCurrentWeatherName(),
+        temp = GetCurrentTemperature(speedUnitSetting),
+        wind = GetCurrentWindString(SPEED_MULTIPLIER, SPEED_UNIT)
     })
 end
 

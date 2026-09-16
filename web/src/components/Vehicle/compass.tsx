@@ -12,9 +12,23 @@ import { compassStore } from "../../stores/stats";
 import {
   settingsStore,
   type CompassHudLayout,
+  type CompassPosition,
   type PlayerHudLayout,
 } from "../../stores/settings";
 import type { CompassStore } from "../../typings/stats";
+import {
+  FaClock,
+  FaCloud,
+  FaCloudBolt,
+  FaCloudRain,
+  FaCloudSun,
+  FaLocationDot,
+  FaSmog,
+  FaSnowflake,
+  FaSun,
+  FaTemperatureHalf,
+  FaWind,
+} from "react-icons/fa6";
 
 const COMPASS_DIRECTIONS = [
   "N",
@@ -64,9 +78,81 @@ function getBottomPlayerHudClearance(layout: PlayerHudLayout) {
   return BOTTOM_PLAYER_HUD_CLEARANCE[layout];
 }
 
+const getWeatherIcon = (weather?: string) => {
+  const w = (weather || "").toLowerCase();
+  if (w.includes("rain") || w.includes("drizzle")) return FaCloudRain;
+  if (w.includes("thunder")) return FaCloudBolt;
+  if (w.includes("snow") || w.includes("blizzard")) return FaSnowflake;
+  if (w.includes("fog") || w.includes("smog")) return FaSmog;
+  if (w.includes("cloud") || w.includes("overcast")) return FaCloud;
+  if (w.includes("clear") || w.includes("extra")) return FaSun;
+  return FaCloudSun;
+};
+
+const getCompassPositionStyle = (
+  position: CompassPosition,
+  playerLayout: PlayerHudLayout,
+  playerPosition: string,
+): React.CSSProperties => {
+  if (position === "bottom-left") {
+    return {
+      position: "fixed",
+      left: "1vw",
+      bottom: "27.5vh",
+      top: "auto",
+      right: "auto",
+      transform: "none",
+      zIndex: 999,
+      pointerEvents: "none",
+    };
+  }
+
+  if (position === "top-left") {
+    return {
+      position: "fixed",
+      left: "1vw",
+      top: "1.7vh",
+      bottom: "auto",
+      right: "auto",
+      transform: "none",
+      zIndex: 999,
+      pointerEvents: "none",
+    };
+  }
+
+  if (position === "bottom-center") {
+    const sharesBottom = playerPosition === "bottom-center";
+    const bottomOffset = sharesBottom
+      ? getBottomPlayerHudClearance(playerLayout)
+      : "1.7vh";
+    return {
+      position: "fixed",
+      left: "50%",
+      bottom: bottomOffset,
+      top: "auto",
+      right: "auto",
+      transform: "translateX(-50%)",
+      zIndex: 999,
+      pointerEvents: "none",
+    };
+  }
+
+  return {
+    position: "fixed",
+    left: "50%",
+    top: "1.7vh",
+    bottom: "auto",
+    right: "auto",
+    transform: "translateX(-50%)",
+    zIndex: 999,
+    pointerEvents: "none",
+  };
+};
+
 export const Compass = () => {
   const theme = useMantineTheme();
-  const { open, currentStreet, nextStreet, direction, zone } = compassStore();
+  const { open, currentStreet, nextStreet, direction, zone, time, weather, temp, wind } =
+    compassStore();
 
   const compassLayout = settingsStore(
     (state) => state.compass.layout,
@@ -74,7 +160,7 @@ export const Compass = () => {
 
   const compassPosition = settingsStore(
     (state) => state.compass.position,
-  );
+  ) as CompassPosition;
 
   const playerLayout = settingsStore(
     (state) => state.player.layout,
@@ -94,33 +180,32 @@ export const Compass = () => {
   );
 
   const isCompact = compassLayout === "compact";
-  const isBottomCenter = compassPosition === "bottom-center";
-  const sharesBottomCenterWithPlayer =
-    isBottomCenter && playerPosition === "bottom-center";
+  const WeatherIconComponent = useMemo(() => getWeatherIcon(weather), [weather]);
 
-  const bottomOffset = sharesBottomCenterWithPlayer
-    ? getBottomPlayerHudClearance(playerLayout)
-    : "1.7vh";
+  const posStyle = useMemo(
+    () =>
+      getCompassPositionStyle(compassPosition, playerLayout, playerPosition),
+    [compassPosition, playerLayout, playerPosition],
+  );
+
+  const transitionType =
+    compassPosition === "bottom-left" || compassPosition === "top-left"
+      ? "slide-right"
+      : compassPosition === "bottom-center"
+        ? "slide-up"
+        : "slide-down";
 
   return (
     <Transition
       mounted={open}
-      transition={isBottomCenter ? "slide-up" : "slide-down"}
+      transition={transitionType}
       duration={300}
       timingFunction="ease"
     >
       {(transitionStyles) => (
         <Box
-          pos="fixed"
           style={{
-            top: isBottomCenter ? undefined : "1.7vh",
-            bottom: isBottomCenter ? bottomOffset : undefined,
-            left: 0,
-            right: 0,
-            display: "flex",
-            justifyContent: "center",
-            zIndex: 999,
-            pointerEvents: "none",
+            ...posStyle,
             ...transitionStyles,
           }}
         >
@@ -206,69 +291,124 @@ export const Compass = () => {
           ) : (
             <Flex
               direction="column"
-              align="center"
-              justify="center"
-              gap="0.45vh"
               style={{
-                width: "39vh",
+                minWidth: "16vw",
+                maxWidth: "20vw",
+                width: "fit-content",
               }}
             >
-              <Text
-                size="0.95vh"
-                fw={700}
-                ta="center"
-                style={{
-                  lineHeight: 1,
-                  color: "rgba(255, 255, 255, 0.65)",
-                  textTransform: "uppercase",
-                }}
-              >
-                {zone || "N/A"}
-              </Text>
+              {/* Header: Direction Badge + Street & Zone */}
+              <Flex align="center" gap="0.8vh">
+                <Flex
+                  align="center"
+                  justify="center"
+                  style={{
+                    width: "3.8vh",
+                    height: "3.8vh",
+                    flexShrink: 0,
+                    borderRadius: "0.45vh",
+                    backgroundColor: "#0084ff",
+                    boxShadow: "0 0 10px rgba(0, 132, 255, 0.45)",
+                  }}
+                >
+                  <Text
+                    fz="1.55vh"
+                    fw={900}
+                    c="white"
+                    lh={1}
+                    tt="uppercase"
+                  >
+                    {direction || "N"}
+                  </Text>
+                </Flex>
 
-              <Text
-                size="1.8vh"
-                fw={900}
-                ta="center"
-                style={{
-                  lineHeight: 1,
-                  color: theme.colors.blue[4],
-                  textShadow: `0 0 8px ${theme.colors.blue[6]}`,
-                  textTransform: "uppercase",
-                }}
-              >
-                {direction || "N/A"}
-              </Text>
+                <Flex
+                  direction="column"
+                  gap="0.1vh"
+                  style={{ minWidth: 0, flex: 1 }}
+                >
+                  <Flex align="center" gap="0.4vh">
+                    <FaLocationDot
+                      size="1.15vh"
+                      color="#38bdf8"
+                      style={{ flexShrink: 0 }}
+                    />
+                    <Text
+                      fz="1.4vh"
+                      fw={900}
+                      lh={1.1}
+                      tt="uppercase"
+                      truncate
+                      style={{
+                        color: "#38bdf8",
+                        textShadow: "0 0 8px rgba(56, 189, 248, 0.4)",
+                      }}
+                    >
+                      {currentStreet || "N/A"}
+                    </Text>
+                  </Flex>
 
-              <Text
-                size="1.5vh"
-                fw={900}
-                ta="center"
-                truncate
-                style={{
-                  width: "36vh",
-                  lineHeight: 1,
-                  color: "rgba(255, 255, 255, 0.95)",
-                  textTransform: "uppercase",
-                }}
-              >
-                {currentStreet || "N/A"}
-              </Text>
+                  <Text
+                    fz="1.1vh"
+                    fw={800}
+                    c="white"
+                    lh={1.1}
+                    tt="uppercase"
+                    truncate
+                    style={{
+                      letterSpacing: "0.03em",
+                      opacity: 0.95,
+                    }}
+                  >
+                    {zone || "N/A"}
+                  </Text>
+                </Flex>
+              </Flex>
 
-              <Text
-                size="1vh"
-                fw={800}
-                ta="center"
-                truncate
+              {/* Info Bar: Time, Weather, Temperature, Wind */}
+              <Flex
+                align="center"
+                justify="space-between"
+                gap="0.8vh"
+                mt="0.6vh"
+                px="0.85vh"
+                py="0.5vh"
                 style={{
-                  width: "30vh",
-                  lineHeight: 1,
-                  color: "rgba(255, 255, 255, 0.75)",
-                  textTransform: "uppercase",
+                  borderRadius: "0.45vh",
+                  backgroundColor: "rgba(10, 16, 26, 0.85)",
+                  backdropFilter: "blur(8px)",
+                  border: "0.15vh solid rgba(255, 255, 255, 0.08)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.5)",
                 }}
               >
-                {nextStreet || ""}
-              </Text>
+                <Flex align="center" gap="0.35vh">
+                  <FaClock size="1.05vh" color="#38bdf8" />
+                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
+                    {time || "12:00"}
+                  </Text>
+                </Flex>
+
+                <Flex align="center" gap="0.35vh">
+                  <WeatherIconComponent size="1.1vh" color="#38bdf8" />
+                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
+                    {weather || "Clear"}
+                  </Text>
+                </Flex>
+
+                <Flex align="center" gap="0.35vh">
+                  <FaTemperatureHalf size="1.05vh" color="#38bdf8" />
+                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
+                    {temp || "72°F"}
+                  </Text>
+                </Flex>
+
+                <Flex align="center" gap="0.35vh">
+                  <FaWind size="1.05vh" color="#38bdf8" />
+                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
+                    {wind || "0 MPH"}
+                  </Text>
+                </Flex>
+              </Flex>
             </Flex>
           )}
         </Box>

@@ -19,11 +19,15 @@ export const statsStore = create<StatsStore>((set) => ({
 
 export const compassStore = create<CompassStore>((set) => ({
   open: isEnvBrowser() ? true : false,
-  currentStreet: "San Andreas Ave",
-  nextStreet: "Grove Street",
-  zone: "Paleto Bay",
+  currentStreet: "Elgin Ave",
+  nextStreet: "Pillbox Hill",
+  zone: "Pillbox Hill",
   direction: "NW",
-  heading: 10
+  heading: 315,
+  time: "21:59",
+  weather: "Rain",
+  temp: "72°F",
+  wind: "10 MPH",
 }));
 
 export const vehicleStore = create<VehicleStore>((set) => ({

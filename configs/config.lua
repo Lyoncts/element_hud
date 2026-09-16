@@ -120,8 +120,8 @@ return {
                 -- full or compact
                 layout = 'full',
 
-                -- top-center or bottom-center
-                position = 'top-center',
+                -- bottom-left (above minimap), top-center, bottom-center or top-left
+                position = 'bottom-left',
             },
         },
     },

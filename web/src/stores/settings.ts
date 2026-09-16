@@ -31,7 +31,11 @@ export type VehicleHudLayout = "digital" | "dial";
 export type VehicleIndicatorLayout = "icons" | "minimal" | "circular";
 
 export type CompassHudLayout = "full" | "compact";
-export type CompassPosition = "top-center" | "bottom-center";
+export type CompassPosition =
+  | "bottom-left"
+  | "top-center"
+  | "bottom-center"
+  | "top-left";
 
 export type StandardPlayerIndicatorId =
   | "health"
@@ -241,7 +245,7 @@ const defaultVehicleSettings: VehicleHudSettings = {
 
 const defaultCompassSettings: CompassHudSettings = {
   layout: "full",
-  position: "top-center",
+  position: "bottom-left",
 };
 
 const clonePlayerSettings = (
