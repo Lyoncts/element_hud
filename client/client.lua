@@ -39,14 +39,10 @@ local VALID_VEHICLE_INDICATOR_LAYOUTS = {
 
 local VALID_COMPASS_LAYOUTS = {
     full = true,
-    compact = true,
 }
 
 local VALID_COMPASS_POSITIONS = {
     ['bottom-left'] = true,
-    ['top-center'] = true,
-    ['bottom-center'] = true,
-    ['top-left'] = true,
 }
 
 local VALID_INDICATOR_VISIBILITY = {
