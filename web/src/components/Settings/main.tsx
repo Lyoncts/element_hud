@@ -1694,7 +1694,7 @@ const Settings = () => {
     <Stack gap="0.9vh">
       <PageHeading
         title="Compass"
-        description="Customize your compass layout"
+        description="Customize your compass layout (anchored above the minimap)"
       />
 
       <SimpleGrid cols={2} spacing="0.8vh">
@@ -1702,7 +1702,7 @@ const Settings = () => {
           value="full"
           current={compass.layout}
           title="Standard"
-          description="Full compass layout with both streets and direction"
+          description="Full compass layout with streets, weather and stats"
           preview={<PreviewCompassDefault />}
           onSelect={saveCompassLayout}
         />
@@ -1715,27 +1715,6 @@ const Settings = () => {
           onSelect={saveCompassLayout}
         />
       </SimpleGrid>
-
-      <SettingRow
-        title="Compass Position"
-        description="Choose where the compass should be displayed (top or bottom)"
-      >
-        <Select
-          value={compass.position}
-          onChange={(value: string | null) =>
-            value && saveCompassPosition(value as CompassPosition)
-          }
-          data={[
-            { value: "bottom-left", label: "Bottom Left (Above Minimap)" },
-            { value: "top-center", label: "Top Center" },
-            { value: "bottom-center", label: "Bottom Center" },
-            { value: "top-left", label: "Top Left" },
-          ]}
-          w="13vw"
-          allowDeselect={false}
-          styles={selectStyles}
-        />
-      </SettingRow>
     </Stack>
   );
 

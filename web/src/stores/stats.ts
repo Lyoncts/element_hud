@@ -27,7 +27,7 @@ export const compassStore = create<CompassStore>((set) => ({
   time: "21:59",
   weather: "Rain",
   temp: "72°F",
-  wind: "10 MPH",
+  wind: "N 0 MPH",
 }));
 
 export const vehicleStore = create<VehicleStore>((set) => ({

@@ -852,8 +852,9 @@ RegisterNUICallback('setHudPosition', function(data, cb)
 
     if section == 'player' and VALID_PLAYER_HUD_POSITIONS[position] then
         activeHudSettings.player.position = position
-    elseif section == 'compass' and VALID_COMPASS_POSITIONS[position] then
-        activeHudSettings.compass.position = position
+    elseif section == 'compass' then
+        cb({ status = 'error', message = 'Compass position is fixed above the minimap' })
+        return
     else
         cb({ status = 'error', message = 'Invalid HUD position' })
         return

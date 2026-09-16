@@ -8,14 +8,13 @@ import {
 } from "@mantine/core";
 import { useMemo } from "react";
 import { useNuiEvent } from "../../hooks/useNuiEvent";
-import { compassStore } from "../../stores/stats";
+import { compassStore, minimapStore } from "../../stores/stats";
 import {
   settingsStore,
   type CompassHudLayout,
-  type CompassPosition,
-  type PlayerHudLayout,
 } from "../../stores/settings";
 import type { CompassStore } from "../../typings/stats";
+import { isEnvBrowser } from "../../utils/misc";
 import {
   FaClock,
   FaCloud,
@@ -43,12 +42,6 @@ const COMPASS_DIRECTIONS = [
 
 type CompassDirection = (typeof COMPASS_DIRECTIONS)[number];
 
-const BOTTOM_PLAYER_HUD_CLEARANCE: Record<PlayerHudLayout, string> = {
-  icons: "6.5vh",
-  minimal: "7.5vh",
-  circular: "6.8vh",
-};
-
 function getCompactDirection(direction?: string) {
   const normalizedDirection = (direction || "N").toUpperCase();
   const index = COMPASS_DIRECTIONS.indexOf(
@@ -74,10 +67,6 @@ function getCompactDirection(direction?: string) {
   };
 }
 
-function getBottomPlayerHudClearance(layout: PlayerHudLayout) {
-  return BOTTOM_PLAYER_HUD_CLEARANCE[layout];
-}
-
 const getWeatherIcon = (weather?: string) => {
   const w = (weather || "").toLowerCase();
   if (w.includes("rain") || w.includes("drizzle")) return FaCloudRain;
@@ -89,89 +78,26 @@ const getWeatherIcon = (weather?: string) => {
   return FaCloudSun;
 };
 
-const getCompassPositionStyle = (
-  position: CompassPosition,
-  playerLayout: PlayerHudLayout,
-  playerPosition: string,
-): React.CSSProperties => {
-  if (position === "bottom-left") {
-    return {
-      position: "fixed",
-      left: "1vw",
-      bottom: "27.5vh",
-      top: "auto",
-      right: "auto",
-      transform: "none",
-      zIndex: 999,
-      pointerEvents: "none",
-    };
-  }
-
-  if (position === "top-left") {
-    return {
-      position: "fixed",
-      left: "1vw",
-      top: "1.7vh",
-      bottom: "auto",
-      right: "auto",
-      transform: "none",
-      zIndex: 999,
-      pointerEvents: "none",
-    };
-  }
-
-  if (position === "bottom-center") {
-    const sharesBottom = playerPosition === "bottom-center";
-    const bottomOffset = sharesBottom
-      ? getBottomPlayerHudClearance(playerLayout)
-      : "1.7vh";
-    return {
-      position: "fixed",
-      left: "50%",
-      bottom: bottomOffset,
-      top: "auto",
-      right: "auto",
-      transform: "translateX(-50%)",
-      zIndex: 999,
-      pointerEvents: "none",
-    };
-  }
-
-  return {
-    position: "fixed",
-    left: "50%",
-    top: "1.7vh",
-    bottom: "auto",
-    right: "auto",
-    transform: "translateX(-50%)",
-    zIndex: 999,
-    pointerEvents: "none",
-  };
-};
-
 export const Compass = () => {
   const theme = useMantineTheme();
   const { open, currentStreet, nextStreet, direction, zone, time, weather, temp, wind } =
     compassStore();
+  const { visibility: minimapVisible } = minimapStore();
 
   const compassLayout = settingsStore(
     (state) => state.compass.layout,
   ) as CompassHudLayout;
 
-  const compassPosition = settingsStore(
-    (state) => state.compass.position,
-  ) as CompassPosition;
-
-  const playerLayout = settingsStore(
-    (state) => state.player.layout,
-  ) as PlayerHudLayout;
-
-  const playerPosition = settingsStore(
-    (state) => state.player.position,
-  );
-
   useNuiEvent<Partial<CompassStore>>("UPDATE_COMPASS", (data) => {
     compassStore.setState(data);
+  });
+
+  useNuiEvent("MINIMAP_SHOW", () => {
+    minimapStore.setState({ visibility: true });
+  });
+
+  useNuiEvent("MINIMAP_HIDE", () => {
+    minimapStore.setState({ visibility: false });
   });
 
   const compactDirection = useMemo(
@@ -182,30 +108,23 @@ export const Compass = () => {
   const isCompact = compassLayout === "compact";
   const WeatherIconComponent = useMemo(() => getWeatherIcon(weather), [weather]);
 
-  const posStyle = useMemo(
-    () =>
-      getCompassPositionStyle(compassPosition, playerLayout, playerPosition),
-    [compassPosition, playerLayout, playerPosition],
-  );
-
-  const transitionType =
-    compassPosition === "bottom-left" || compassPosition === "top-left"
-      ? "slide-right"
-      : compassPosition === "bottom-center"
-        ? "slide-up"
-        : "slide-down";
+  const isVisible = open || (isEnvBrowser() && minimapVisible);
 
   return (
     <Transition
-      mounted={open}
-      transition={transitionType}
+      mounted={isVisible}
+      transition="slide-right"
       duration={300}
       timingFunction="ease"
     >
       {(transitionStyles) => (
         <Box
           style={{
-            ...posStyle,
+            position: "fixed",
+            left: "1vw",
+            bottom: "6.5vh",
+            zIndex: 999,
+            pointerEvents: "none",
             ...transitionStyles,
           }}
         >
@@ -292,123 +211,151 @@ export const Compass = () => {
             <Flex
               direction="column"
               style={{
-                minWidth: "16vw",
-                maxWidth: "20vw",
-                width: "fit-content",
+                width: "16.4vw",
               }}
             >
-              {/* Header: Direction Badge + Street & Zone */}
-              <Flex align="center" gap="0.8vh">
+              {/* Floating Header: [ NW ] 📍 ELGIN AVE / PILLBOX HILL */}
+              <Flex align="center" gap="0.75vh" mb="0.75vh">
+                {/* [ NW ] Badge */}
                 <Flex
                   align="center"
                   justify="center"
                   style={{
-                    width: "3.8vh",
-                    height: "3.8vh",
+                    width: "3.5vh",
+                    height: "3.5vh",
                     flexShrink: 0,
-                    borderRadius: "0.45vh",
-                    backgroundColor: "#0084ff",
-                    boxShadow: "0 0 10px rgba(0, 132, 255, 0.45)",
+                    borderRadius: "0.35vh",
+                    backgroundColor: "#0c192c",
+                    border: "0.18vh solid #1e3a5f",
+                    boxShadow: "0 0 10px rgba(56, 189, 248, 0.25)",
                   }}
                 >
                   <Text
-                    fz="1.55vh"
+                    fz="1.45vh"
                     fw={900}
-                    c="white"
                     lh={1}
                     tt="uppercase"
+                    style={{
+                      color: "#67e8f9",
+                      textShadow: "0 0 8px rgba(56, 189, 248, 0.75)",
+                    }}
                   >
-                    {direction || "N"}
+                    {direction || "NW"}
                   </Text>
                 </Flex>
 
-                <Flex
-                  direction="column"
-                  gap="0.1vh"
-                  style={{ minWidth: 0, flex: 1 }}
-                >
-                  <Flex align="center" gap="0.4vh">
+                {/* Street & Zone */}
+                <Flex direction="column" gap="0.1vh" style={{ minWidth: 0, flex: 1 }}>
+                  <Flex align="center" gap="0.45vh">
                     <FaLocationDot
-                      size="1.15vh"
+                      size="1.2vh"
                       color="#38bdf8"
                       style={{ flexShrink: 0 }}
                     />
                     <Text
-                      fz="1.4vh"
+                      fz="1.45vh"
                       fw={900}
                       lh={1.1}
                       tt="uppercase"
                       truncate
                       style={{
                         color: "#38bdf8",
-                        textShadow: "0 0 8px rgba(56, 189, 248, 0.4)",
+                        letterSpacing: "0.07em",
+                        textShadow: "0 0 8px rgba(56, 189, 248, 0.5)",
                       }}
                     >
-                      {currentStreet || "N/A"}
+                      {currentStreet || "ELGIN AVE"}
                     </Text>
                   </Flex>
 
                   <Text
-                    fz="1.1vh"
+                    fz="1.15vh"
                     fw={800}
                     c="white"
                     lh={1.1}
                     tt="uppercase"
                     truncate
                     style={{
-                      letterSpacing: "0.03em",
-                      opacity: 0.95,
+                      letterSpacing: "0.05em",
+                      paddingLeft: "0.2vh",
                     }}
                   >
-                    {zone || "N/A"}
+                    {zone || "PILLBOX HILL"}
                   </Text>
                 </Flex>
               </Flex>
 
-              {/* Info Bar: Time, Weather, Temperature, Wind */}
-              <Flex
-                align="center"
-                justify="space-between"
-                gap="0.8vh"
-                mt="0.6vh"
-                px="0.85vh"
-                py="0.5vh"
+              {/* The Card: Info Bar Header + Minimap Frame */}
+              <Box
                 style={{
+                  width: "100%",
                   borderRadius: "0.45vh",
-                  backgroundColor: "rgba(10, 16, 26, 0.85)",
-                  backdropFilter: "blur(8px)",
-                  border: "0.15vh solid rgba(255, 255, 255, 0.08)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.5)",
+                  overflow: "hidden",
+                  border: "0.22vh solid #1e293b",
+                  boxShadow: "0 6px 18px rgba(0, 0, 0, 0.65)",
+                  backgroundColor: "#0f172a",
                 }}
               >
-                <Flex align="center" gap="0.35vh">
-                  <FaClock size="1.05vh" color="#38bdf8" />
-                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
-                    {time || "12:00"}
-                  </Text>
+                {/* Info Bar Header */}
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  gap="0.8vh"
+                  px="0.9vh"
+                  py="0.65vh"
+                  style={{
+                    backgroundColor: "rgba(14, 22, 36, 0.98)",
+                    borderBottom: "0.18vh solid #1e293b",
+                  }}
+                >
+                  {/* Time */}
+                  <Flex align="center" gap="0.4vh">
+                    <FaClock size="1.15vh" color="#38bdf8" />
+                    <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                      {time || "21:59"}
+                    </Text>
+                  </Flex>
+
+                  {/* Weather */}
+                  <Flex align="center" gap="0.4vh">
+                    <WeatherIconComponent size="1.2vh" color="#38bdf8" />
+                    <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                      {weather || "Rain"}
+                    </Text>
+                  </Flex>
+
+                  {/* Temperature */}
+                  <Flex align="center" gap="0.4vh">
+                    <FaTemperatureHalf size="1.15vh" color="#38bdf8" />
+                    <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                      {temp || "72°F"}
+                    </Text>
+                  </Flex>
+
+                  {/* Wind / Speed */}
+                  <Flex align="center" gap="0.4vh">
+                    <FaWind size="1.15vh" color="#38bdf8" />
+                    <Text fz="1.15vh" fw={800} c="white" lh={1}>
+                      {wind || "N 0 MPH"}
+                    </Text>
+                  </Flex>
                 </Flex>
 
-                <Flex align="center" gap="0.35vh">
-                  <WeatherIconComponent size="1.1vh" color="#38bdf8" />
-                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
-                    {weather || "Clear"}
-                  </Text>
-                </Flex>
-
-                <Flex align="center" gap="0.35vh">
-                  <FaTemperatureHalf size="1.05vh" color="#38bdf8" />
-                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
-                    {temp || "72°F"}
-                  </Text>
-                </Flex>
-
-                <Flex align="center" gap="0.35vh">
-                  <FaWind size="1.05vh" color="#38bdf8" />
-                  <Text fz="1.05vh" fw={800} c="white" lh={1}>
-                    {wind || "0 MPH"}
-                  </Text>
-                </Flex>
-              </Flex>
+                {/* Minimap Viewport / Cutout */}
+                <Box
+                  style={{
+                    width: "100%",
+                    height: "19vh",
+                    position: "relative",
+                    backgroundColor: isEnvBrowser() ? "#1e293b" : "transparent",
+                    backgroundImage: isEnvBrowser()
+                      ? "url('https://i.imgur.com/kiK65kg.jpeg')"
+                      : "none",
+                    backgroundSize: "cover",
+                    backgroundPosition: "left bottom",
+                  }}
+                />
+              </Box>
             </Flex>
           )}
         </Box>

@@ -120,7 +120,7 @@ return {
                 -- full or compact
                 layout = 'full',
 
-                -- bottom-left (above minimap), top-center, bottom-center or top-left
+                -- Anchored above the minimap
                 position = 'bottom-left',
             },
         },

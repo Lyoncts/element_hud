@@ -250,7 +250,8 @@ end
 function GetCurrentWindString(speedMultiplier, speedUnit)
     local windSpeed = GetWindSpeed()
     local speed = math.floor(windSpeed * (speedMultiplier or 2.23694))
-    return string.format("%d %s", speed, speedUnit or "MPH")
+    local heading = GetCamCardinalDirection()
+    return string.format("%s %d %s", heading, speed, speedUnit or "MPH")
 end
 
 function GetStreet()
