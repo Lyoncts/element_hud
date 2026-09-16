@@ -68,8 +68,8 @@ export const Compass = () => {
         <Box
           style={{
             position: "fixed",
-            left: "1vw",
-            bottom: "5.6vh",
+            left: "1.0vw",
+            bottom: "6.05vh",
             zIndex: 999,
             pointerEvents: "none",
             backgroundColor: "transparent",
@@ -79,19 +79,19 @@ export const Compass = () => {
           <Flex
             direction="column"
             style={{
-              width: "30.4vh",
+              width: "24.5vh",
               backgroundColor: "transparent",
             }}
           >
             {/* Floating Header: [ NW ] 📍 ELGIN AVE / PILLBOX HILL */}
-            <Flex align="center" gap="0.75vh" mb="0.75vh">
+            <Flex align="center" gap="0.6vh" mb="0.6vh">
               {/* [ NW ] Badge */}
               <Flex
                 align="center"
                 justify="center"
                 style={{
-                  width: "3.5vh",
-                  height: "3.5vh",
+                  width: "3.2vh",
+                  height: "3.2vh",
                   flexShrink: 0,
                   borderRadius: "0.35vh",
                   backgroundColor: "#0c192c",
@@ -100,7 +100,7 @@ export const Compass = () => {
                 }}
               >
                 <Text
-                  fz="1.45vh"
+                  fz="1.35vh"
                   fw={900}
                   lh={1}
                   tt="uppercase"
@@ -115,21 +115,21 @@ export const Compass = () => {
 
               {/* Street & Zone */}
               <Flex direction="column" gap="0.1vh" style={{ minWidth: 0, flex: 1 }}>
-                <Flex align="center" gap="0.45vh">
+                <Flex align="center" gap="0.35vh">
                   <FaLocationDot
-                    size="1.2vh"
+                    size="1.1vh"
                     color="#38bdf8"
                     style={{ flexShrink: 0 }}
                   />
                   <Text
-                    fz="1.45vh"
+                    fz="1.35vh"
                     fw={900}
                     lh={1.1}
                     tt="uppercase"
                     truncate
                     style={{
                       color: "#38bdf8",
-                      letterSpacing: "0.07em",
+                      letterSpacing: "0.06em",
                       textShadow: "0 0 8px rgba(56, 189, 248, 0.5)",
                     }}
                   >
@@ -138,15 +138,15 @@ export const Compass = () => {
                 </Flex>
 
                 <Text
-                  fz="1.15vh"
+                  fz="1.05vh"
                   fw={800}
                   c="white"
                   lh={1.1}
                   tt="uppercase"
                   truncate
                   style={{
-                    letterSpacing: "0.05em",
-                    paddingLeft: "0.2vh",
+                    letterSpacing: "0.04em",
+                    paddingLeft: "0.15vh",
                   }}
                 >
                   {zone || "PILLBOX HILL"}
@@ -166,44 +166,46 @@ export const Compass = () => {
               <Flex
                 align="center"
                 justify="space-between"
-                gap="0.6vh"
-                px="0.8vh"
-                py="0.6vh"
+                gap="0.3vh"
+                px="0.6vh"
+                py="0.45vh"
                 style={{
                   backgroundColor: "rgba(11, 18, 30, 0.96)",
                   border: "0.22vh solid #1e293b",
                   borderBottom: "0.18vh solid #1e293b",
                   borderRadius: "0.45vh 0.45vh 0 0",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
                 }}
               >
                 {/* Time */}
-                <Flex align="center" gap="0.35vh">
-                  <FaClock size="1.1vh" color="#38bdf8" />
-                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
+                  <FaClock size="1.0vh" color="#38bdf8" />
+                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
                     {time || "21:59"}
                   </Text>
                 </Flex>
 
                 {/* Weather */}
-                <Flex align="center" gap="0.35vh">
-                  <WeatherIconComponent size="1.15vh" color="#38bdf8" />
-                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0, minWidth: 0 }}>
+                  <WeatherIconComponent size="1.05vh" color="#38bdf8" />
+                  <Text fz="0.95vh" fw={800} c="white" lh={1} truncate style={{ whiteSpace: "nowrap" }}>
                     {weather || "Rain"}
                   </Text>
                 </Flex>
 
                 {/* Temperature */}
-                <Flex align="center" gap="0.35vh">
-                  <FaTemperatureHalf size="1.1vh" color="#38bdf8" />
-                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
+                  <FaTemperatureHalf size="1.0vh" color="#38bdf8" />
+                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
                     {temp || "72°F"}
                   </Text>
                 </Flex>
 
                 {/* Wind / Speed */}
-                <Flex align="center" gap="0.35vh">
-                  <FaWind size="1.1vh" color="#38bdf8" />
-                  <Text fz="1.1vh" fw={800} c="white" lh={1}>
+                <Flex align="center" gap="0.25vh" style={{ flexShrink: 0 }}>
+                  <FaWind size="1.0vh" color="#38bdf8" />
+                  <Text fz="0.95vh" fw={800} c="white" lh={1} style={{ whiteSpace: "nowrap" }}>
                     {wind || "N 0 MPH"}
                   </Text>
                 </Flex>
@@ -213,7 +215,7 @@ export const Compass = () => {
               <Box
                 style={{
                   width: "100%",
-                  height: "21.4vh",
+                  height: "19.6vh",
                   position: "relative",
                   backgroundColor: "transparent",
                   borderLeft: "0.22vh solid #1e293b",
